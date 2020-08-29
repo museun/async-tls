@@ -1,4 +1,4 @@
-use futures::io::{AsyncRead, AsyncWrite};
+use futures_lite::{AsyncRead, AsyncWrite};
 use rustls::Session;
 use std::io::{self, Read, Write};
 use std::marker::Unpin;
@@ -242,7 +242,7 @@ impl<'a, IO: AsyncRead + AsyncWrite + Unpin, S: Session> AsyncWrite for Stream<'
 
         this.session.flush()?;
         while this.session.wants_write() {
-            futures::ready!(this.complete_inner_io(cx, Focus::Writable))?;
+            futures_lite::ready!(this.complete_inner_io(cx, Focus::Writable))?;
         }
         Pin::new(&mut this.io).poll_flush(cx)
     }
@@ -251,7 +251,7 @@ impl<'a, IO: AsyncRead + AsyncWrite + Unpin, S: Session> AsyncWrite for Stream<'
         let this = self.get_mut();
 
         while this.session.wants_write() {
-            futures::ready!(this.complete_inner_io(cx, Focus::Writable))?;
+            futures_lite::ready!(this.complete_inner_io(cx, Focus::Writable))?;
         }
         Pin::new(&mut this.io).poll_close(cx)
     }
